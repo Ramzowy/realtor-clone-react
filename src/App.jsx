@@ -3,6 +3,7 @@ import Home from "./pages/Home.jsx";
 import Profile from "./pages/Profile.jsx";
 import SignIn from "./pages/SignIn.jsx";
 import SignUp from "./pages/SignUp.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import Offers from "./pages/Offers.jsx";
 import Header from "./components/Header.jsx";
@@ -16,7 +17,9 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
           <Route path="/Sign-in" element={<SignIn />} />
           <Route path="/Sign-up" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
