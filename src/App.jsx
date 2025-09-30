@@ -9,6 +9,7 @@ import Offers from "./pages/Offers.jsx";
 import Header from "./components/Header.jsx";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CreateListing from "./pages/CreateListing.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/Sign-up" element={<SignUp />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/offers" element={<Offers />} />
+          <Route path="/create-listing" element={<CreateListing />} />
         </Routes>
       </Router>
       <ToastContainer
