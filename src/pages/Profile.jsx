@@ -1,6 +1,6 @@
 import { getAuth } from "firebase/auth";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { updateProfile } from "firebase/auth";
@@ -8,10 +8,14 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 import { FcHome } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import ListingItem from "../components/ListingItem.jsx";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 
 export default function Profile() {
   const auth = getAuth();
   const [changeDetail, setChangeDetail] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState([]);
   const navigate = useNavigate();
   const [formData, setFormData] = React.useState({
     name: auth.currentUser.displayName,
@@ -48,12 +52,36 @@ export default function Profile() {
         toast.success("Profile details updated");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Could not update the profile");
     }
   }
 
+  useEffect(() => {
+    async function fetchUserListings() {
+      const listingRef = collection(db, "listings");
+      const q = query(
+        listingRef,
+        where("useRef", "==", auth.currentUser.uid),
+        orderBy("timestamp", "desc")
+      );
+      const querySnap = await getDocs(q);
+      let listings = [];
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      setListings(listings);
+      setLoading(false);
+    }
+    fetchUserListings();
+  }, [auth.currentUser.uid]);
+
+  console.log(listings);
+
   return (
-    <>
+    <div>
       <section className="max-w-6xl mx-auto flex justify-center items-center flex-col">
         <h1 className="text-3xl text-center mt-6 font-bold">My Profile</h1>
         <div className="w-full md:w-[50%] mt-6 px-3 ">
@@ -113,6 +141,22 @@ export default function Profile() {
           </button>
         </div>
       </section>
-    </>
+      <div className="max-w-6xl px-3 mt-6 mx-auto">
+        {!loading && listings.length > 0 && (
+          <>
+            <h2 className="text-2xl text-center font-semibold">My Listings</h2>
+            <ul>
+              {listings.map((listing) => (
+                <ListingItem
+                  key={listing.id}
+                  id={listing.id}
+                  listing={listing.data}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

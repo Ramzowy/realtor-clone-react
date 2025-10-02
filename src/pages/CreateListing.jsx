@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Spinner from "../components/Spinner.jsx";
 import { toast } from "react-toastify";
 import {
@@ -13,6 +13,7 @@ import { getAuth } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { getDoc } from "firebase/firestore";
 
 export default function CreateListing() {
   const navigate = useNavigate();
@@ -166,6 +167,7 @@ export default function CreateListing() {
       imgUrls,
       geolocation,
       timestamp: serverTimestamp(),
+      useRef: auth.currentUser.uid,
     };
 
     delete formDataCopy.images;
